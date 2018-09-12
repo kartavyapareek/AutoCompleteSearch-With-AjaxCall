@@ -1,0 +1,74 @@
+<div class="row">
+	<div class="col-md-5 text-center summaryPanelColor">
+		<div class="row padding20cls">
+			<div class="col-md-6"><%= @user.points %> Points</div>
+			<div class="col-md-6">Hello <%= @user.name %>!</div>
+		</div>
+		<div class="row profileImage"><%= image_tag @user.media.image_url %> </div>
+		<div class="row padding20cls">
+			<div class="col-md-6">
+				<div class="summaryInnerPanel">
+					<p><strong>Recurring Gifts</strong><br/></p>
+					<p><strong>$<%=@recurringall%></strong><br/>Life-To-Date</p>
+					<p><strong>$<%=@recurringmonth%></strong><br/>Month-To-Date</p>
+					<p><strong>$<%=@recurringyear%></strong><br/>Year-To-Date</p>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="summaryInnerPanel">
+					<p><strong>Onetime Gifts</strong></p>
+					<p><strong>$<%=@onetimeall%></strong><br/>Life-To-Date</p>
+					<p><strong>$<%=@onetimemonth%></strong><br/>Month-To-Date</p>
+					<p><strong>$<%=@onetimeyear%></strong><br/>Year-To-Date</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<% if @user.transaction_histories.present? %>
+	<div class="col-md-7 padding20cls rightPanel">
+		<div class="wrapper center-block">
+			<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+			<% @user.transaction_histories.order(updated_at: :desc).group_by { |b| b.updated_at.year }.each do |year, transactions|%>
+			<h1><%= year %></h1>
+			  <% transactions.each_with_index do |val, index| %>
+				  <div class="panel panel-default">
+				    <div class="panel-heading active" role="tab" id="heading<%= index.to_s %>">
+				      <h4 class="panel-title">
+				        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= index.to_s %>" aria-expanded="false" aria-controls="collapse<%= index.to_s %>">
+				        	<div class="row">
+				        		<div class="col-md-4">
+				        		<h3>$<%= val.transaction_amount %></h3>
+				        			
+				        		</div>
+				        		<div class="col-md-6">
+					        		<p class="panelPara">
+					        			<%= val.transaction_datetime.to_date %><br />
+					          		<%= val.transaction_type %><br />
+					          		<%= val.merchant_name %><br />
+					        		</p>
+				        		</div>
+				        	</div>
+				        </a>
+				      </h4>
+				    </div>
+				    <div id="collapse<%= index.to_s %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= index.to_s %>">
+				      <div class="panel-body">
+				      	<%= val.transaction_type%><hr>
+				        <p class="panelPara"><%= val.transaction_amount%> | <%= val.transaction_type %> | <%= val.transaction_datetime.to_date %></p>
+				        <p class="panelPara">MASTER CARD XXXX XXXX XXXX <%= val.user_card.last_four %> | <%= val.merchant_name %> </p>
+				      </div>
+				    </div>
+				  </div>
+				<% end %>
+			<% end %>
+			</div>
+		</div>
+	</div>
+	<% else %>
+	<div class="col-md-7 mainRight text-center">
+		No Trascation Data
+	</div>
+	<%end%>
+</div>
+
+
